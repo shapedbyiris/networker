@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "Networker"
-  spec.version      = "0.1.0"
+  spec.version      = "0.2.0"
   spec.summary      = "Swifty networking."
   spec.description  = <<-DESC
   Type-safe, API-agnostic networking.
