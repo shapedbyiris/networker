@@ -16,9 +16,9 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = "10.0"
   spec.osx.deployment_target = "10.9"
   spec.swift_version = '5.0'
-  spec.source_files  = "APIRequests.swift"
+  spec.source_files  = "Sources/*.swift"
 
   spec.test_spec 'Tests' do |test_spec|
-    test_spec.source_files = "HTTPClientTests.swift"
+    test_spec.source_files = "Tests/*.swift"
   end
 end
