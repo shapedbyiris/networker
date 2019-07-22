@@ -32,13 +32,13 @@ public class APIRequestLoader<T: APIRequest> {
     let apiRequest: T
     let urlSession: URLSession
 
-    init(apiRequest: T, urlSession: URLSession = .shared) {
+    public init(apiRequest: T, urlSession: URLSession = .shared) {
         self.apiRequest = apiRequest
         self.urlSession = urlSession
     }
 
     @discardableResult
-    func perform(completionHandler: @escaping (Result<T.SuccessfulResponseDataType, Error>) -> Void) -> URLSessionTask {
+    public func perform(completionHandler: @escaping (Result<T.SuccessfulResponseDataType, Error>) -> Void) -> URLSessionTask {
         let task = urlSession.dataTask(with: apiRequest.request) { (data, response, error) in
 
             guard let data = data else {
