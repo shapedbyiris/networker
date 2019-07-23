@@ -10,7 +10,7 @@ import XCTest
 
 @testable import Networker
 
-class HTTPClientTests: XCTestCase {
+class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
 
     struct MockErrorType: Error, Codable {
         let message: String
@@ -49,8 +49,8 @@ class HTTPClientTests: XCTestCase {
             case .success(let value):
                 XCTAssert(value.value == 32)
                 expectation.fulfill()
-            case .failure:
-                XCTFail()
+            case .failure (let error):
+                XCTFail(String(describing: error))
             }
         }
         wait(for: [expectation], timeout: 1)

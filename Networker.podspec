@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
   Type-safe, API-agnostic networking.
                    DESC
   spec.homepage     = "https://github.com/shapedbyiris/networker"
-  spec.source = { :git => 'git@github.com:shapedbyiris/networker.git', :tag => spec.version }
+  spec.source = { :git => 'https://github.com/shapedbyiris/networker.git', :tag => spec.version }
   spec.license      = {
     :type => 'Custom',
     :text => 'Permission is hereby granted ...'
