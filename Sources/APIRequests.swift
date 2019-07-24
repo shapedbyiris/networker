@@ -41,9 +41,13 @@ public class APIRequestLoader<T: APIRequest> {
     public func perform(completionHandler: @escaping (Result<T.SuccessfulResponseDataType, Error>) -> Void) -> URLSessionTask {
         let task = urlSession.dataTask(with: apiRequest.request) { (data, response, error) in
 
+            guard error == nil else {
+                completionHandler(.failure(error!))
+                return
+            }
+
             guard let data = data else {
-                let error = error ?? APIError.noDataAndNoError
-                completionHandler(.failure(error))
+                completionHandler(.failure(APIError.noDataAndNoError))
                 return
             }
 
@@ -55,9 +59,7 @@ public class APIRequestLoader<T: APIRequest> {
                     completionHandler(.failure(error))
                 }
             } else {
-                if let error = error {
-                    completionHandler(.failure(error))
-                } else if let error = try? JSONDecoder().decode(T.ErrorResponseDataType.self, from: data) {
+                if let error = try? JSONDecoder().decode(T.ErrorResponseDataType.self, from: data) {
                     completionHandler(.failure(error))
                 } else {
                     completionHandler(.failure(APIError.failedToDecodeError))
