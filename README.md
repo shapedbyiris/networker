@@ -27,7 +27,8 @@ struct SlideshowRequest: APIRequest {
     typealias SuccessfulResponseDataType = SlideshowContainer
 }
 
-// Initialise an APIRequestLoader with the APIRequest. APIRequestLoader will smoothly know what to look for in the response and smoothyl report errors:
+// Initialise an APIRequestLoader with the APIRequest. APIRequestLoader will know
+// what to look for in the response and smoothly report errors:
 let loader = APIRequestLoader(apiRequest: SlideshowRequest())
 loader.perform { result in
     print(result)
