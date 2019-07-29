@@ -38,7 +38,7 @@ public class APIRequestLoader<T: APIRequest> {
     }
 
     @discardableResult //swiftlint:disable:next line_length
-    public func perform(completionHandler: @escaping (Result<T.SuccessfulResponseDataType, Error>) -> Void) -> URLSessionTask {
+    public func perform(completionHandler: @escaping (Result<T.SuccessfulResponseDataType, Error>) -> Void) -> URLSessionDataTask {
         let task = urlSession.dataTask(with: apiRequest.request) { (data, response, error) in
 
             guard error == nil else {
