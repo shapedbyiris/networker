@@ -10,6 +10,7 @@ import Foundation
 
 public protocol APIRequest {
     var request: URLRequest { get }
+
     associatedtype SuccessfulResponseDataType: Codable
     associatedtype ErrorResponseDataType: Error & Codable
 }
@@ -39,7 +40,7 @@ public class APIRequestLoader<T: APIRequest> {
 
     @discardableResult //swiftlint:disable:next line_length
     public func perform(completionHandler: @escaping (Result<T.SuccessfulResponseDataType, Error>) -> Void) -> URLSessionDataTask {
-        let task = urlSession.dataTask(with: apiRequest.request) { (data, response, error) in
+        let task = urlSession.dataTask(with: apiRequest.request) { data, response, error in
 
             guard error == nil else {
                 completionHandler(.failure(error!))
