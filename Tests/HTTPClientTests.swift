@@ -22,6 +22,7 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
     struct MockAPIRequestType: APIRequest {
         typealias SuccessfulResponseDataType = MockSuccessType
         typealias ErrorResponseDataType = MockErrorType
+
         let request = URLRequest(url: URL(string: "https://example.com")!)
     }
 
@@ -44,7 +45,7 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
 
         let apiRequest = MockAPIRequestType()
         let loader = APIRequestLoader(apiRequest: apiRequest, urlSession: urlSession)
-        loader.perform { (result) in
+        loader.perform { result in
             switch result {
             case .success(let value):
                 XCTAssert(value.value == 32)
