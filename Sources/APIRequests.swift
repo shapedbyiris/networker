@@ -30,8 +30,8 @@ extension Optional where Wrapped: URLResponse {
 }
 
 public class APIRequestLoader<T: APIRequest> {
-    let apiRequest: T
-    let urlSession: URLSession
+    public let apiRequest: T
+    public let urlSession: URLSession
 
     public init(apiRequest: T, urlSession: URLSession = .shared) {
         self.apiRequest = apiRequest
