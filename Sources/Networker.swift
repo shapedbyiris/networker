@@ -1,5 +1,5 @@
 //
-//  APIRequests.swift
+//  Networker.swift
 //  HTTPClient
 //
 //  Created by Ariel Elkin on 19/07/2019.
@@ -11,13 +11,13 @@ import Foundation
 public protocol APIRequest {
     var request: URLRequest { get }
 
-    associatedtype SuccessfulResponseDataType: Codable
-    associatedtype ErrorResponseDataType: Error & Codable
+    associatedtype SuccessfulResponseDataType: Decodable
+    associatedtype ErrorResponseDataType: Error & Decodable
 }
 
 public enum APIError: Error {
     case noDataAndNoError
-    case failedToDecodeError
+    case failedToDecodeError(statusCode: Int?, body: Data)
 }
 
 extension Optional where Wrapped: URLResponse {
@@ -59,12 +59,11 @@ public class APIRequestLoader<T: APIRequest> {
                 } catch {
                     completionHandler(.failure(error))
                 }
+            } else if let error = try? JSONDecoder().decode(T.ErrorResponseDataType.self, from: data) {
+                completionHandler(.failure(error))
             } else {
-                if let error = try? JSONDecoder().decode(T.ErrorResponseDataType.self, from: data) {
-                    completionHandler(.failure(error))
-                } else {
-                    completionHandler(.failure(APIError.failedToDecodeError))
-                }
+                let statusCode = (response as? HTTPURLResponse)?.statusCode
+                completionHandler(.failure(APIError.failedToDecodeError(statusCode: statusCode, body: data)))
             }
         }
         task.resume()
