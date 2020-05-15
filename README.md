@@ -4,17 +4,17 @@
 import Foundation
 import Networker
 
-// Define your model:
-struct Slideshow: Codable {
+// Define the response as a type that conforms to Decodable:
+struct Slideshow: Decodable {
     let author: String
     let title: String
 }
-struct SlideshowContainer: Codable {
+struct SlideshowContainer: Decodable {
     let slideshow: Slideshow
 }
 
 // Define your Error:
-struct MyErrorType: Error, Codable {
+struct MyErrorType: Error, Decodable {
     let message: String
 }
 
@@ -68,3 +68,8 @@ Then run
 ```bash
 swift package update
 ```
+
+
+## Inspiration
+
+[WWDC 2018 session 417 _Testing Tips & Tricks_](https://developer.apple.com/videos/play/wwdc2018/417/)
