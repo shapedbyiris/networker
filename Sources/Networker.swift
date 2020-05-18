@@ -70,3 +70,11 @@ public class APIRequestLoader<T: APIRequest> {
         return task
     }
 }
+
+extension APIRequest {
+    @discardableResult //swiftlint:disable:next line_length
+    public func perform(urlSession: URLSession = .shared, completionHandler: @escaping (Result<SuccessfulResponseDataType, Error>) -> Void) -> URLSessionDataTask {
+        let loader = APIRequestLoader(apiRequest: self, urlSession: urlSession)
+        return loader.perform(completionHandler: completionHandler)
+    }
+}
