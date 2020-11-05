@@ -1,0 +1,36 @@
+##
+##  ci.yml
+##  Networker
+##
+##  Created by Ariel Elkin on 22/09/2020.
+##  Copyright © 2020 TGR1.618 Ltd. All rights reserved.
+##
+
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  primary:
+    name: Primary
+    runs-on: macOS-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: SwiftLint
+        run: git clone --depth=1 https://github.com/shapedbyiris/swiftlint-config.git && swiftlint lint --strict --config swiftlint-config/swiftlint.yml
+
+      - name: Build
+        run: swift build
+
+      - name: Test
+        run: swift test
+
+      - name: Pod Lint
+        run: pod lib lint --private --verbose
