@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 
 public protocol APIRequest {
     var request: URLRequest { get }
@@ -15,12 +16,7 @@ public protocol APIRequest {
     associatedtype ErrorResponseDataType: Error & Decodable
 }
 
-public enum APIError: Error {
-    case noDataAndNoError
-    case failedToDecodeError(statusCode: Int?, body: Data)
-}
-
-extension Optional where Wrapped: URLResponse {
+extension URLResponse {
     var isSuccess: Bool {
         if let statusCode = (self as? HTTPURLResponse)?.statusCode {
             return statusCode >= 200 && statusCode < 400
@@ -29,52 +25,26 @@ extension Optional where Wrapped: URLResponse {
     }
 }
 
-public class APIRequestLoader<T: APIRequest> {
+open class APIRequestLoader<T: APIRequest> {
     public let apiRequest: T
     public let urlSession: URLSession
 
-    public init(apiRequest: T, urlSession: URLSession = .shared) {
+    public init(_ apiRequest: T, urlSession: URLSession = .shared) {
         self.apiRequest = apiRequest
         self.urlSession = urlSession
     }
 
-    @discardableResult //swiftlint:disable:next line_length
-    public func perform(completionHandler: @escaping (Result<T.SuccessfulResponseDataType, Error>) -> Void) -> URLSessionDataTask {
-        let task = urlSession.dataTask(with: apiRequest.request) { data, response, error in
-
-            guard error == nil else {
-                completionHandler(.failure(error!))
-                return
-            }
-
-            guard let data = data else {
-                completionHandler(.failure(APIError.noDataAndNoError))
-                return
-            }
-
-            if response.isSuccess {
-                do {
-                    let parsedResponse = try JSONDecoder().decode(T.SuccessfulResponseDataType.self, from: data)
-                    completionHandler(.success(parsedResponse))
-                } catch {
-                    completionHandler(.failure(error))
+    open func perform() -> AnyPublisher<T.SuccessfulResponseDataType, Error> {
+        return urlSession.dataTaskPublisher(for: self.apiRequest.request)
+            .tryMap { (data, response) -> Data in
+                if response.isSuccess {
+                    return data
+                } else {
+                    let apiError = try JSONDecoder().decode(T.ErrorResponseDataType.self, from: data)
+                    throw apiError
                 }
-            } else if let error = try? JSONDecoder().decode(T.ErrorResponseDataType.self, from: data) {
-                completionHandler(.failure(error))
-            } else {
-                let statusCode = (response as? HTTPURLResponse)?.statusCode
-                completionHandler(.failure(APIError.failedToDecodeError(statusCode: statusCode, body: data)))
             }
-        }
-        task.resume()
-        return task
-    }
-}
-
-extension APIRequest {
-    @discardableResult //swiftlint:disable:next line_length
-    public func perform(urlSession: URLSession = .shared, completionHandler: @escaping (Result<SuccessfulResponseDataType, Error>) -> Void) -> URLSessionDataTask {
-        let loader = APIRequestLoader(apiRequest: self, urlSession: urlSession)
-        return loader.perform(completionHandler: completionHandler)
+            .decode(type: T.SuccessfulResponseDataType.self, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
     }
 }
