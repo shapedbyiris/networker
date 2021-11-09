@@ -9,8 +9,11 @@
 import XCTest
 
 @testable import Networker
+import Combine
 
 class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
+
+    var cancelBag = Set<AnyCancellable>()
 
     struct MockErrorType: Error, Codable {
         let message: String
@@ -44,16 +47,21 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
         let expectation = XCTestExpectation(description: "response")
 
         let apiRequest = MockAPIRequestType()
-        let loader = APIRequestLoader(apiRequest: apiRequest, urlSession: urlSession)
-        loader.perform { result in
-            switch result {
-            case .success(let value):
+        let loader = APIRequestLoader(apiRequest, urlSession: urlSession)
+        loader.perform()
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    expectation.fulfill()
+                case .failure(let error):
+                    XCTFail(String(describing: error))
+                }
+
+            } receiveValue: { value in
                 XCTAssert(value.value == 32)
-                expectation.fulfill()
-            case .failure(let error):
-                XCTFail(String(describing: error))
             }
-        }
+            .store(in: &cancelBag)
+
         wait(for: [expectation], timeout: 1)
     }
 }
