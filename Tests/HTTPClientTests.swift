@@ -50,7 +50,7 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
             case .success(let value):
                 XCTAssert(value.value == 32)
                 expectation.fulfill()
-            case .failure (let error):
+            case .failure(let error):
                 XCTFail(String(describing: error))
             }
         }
