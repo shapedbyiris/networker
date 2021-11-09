@@ -17,7 +17,7 @@ on:
 jobs:
   primary:
     name: Primary
-    runs-on: macOS-12
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
 
