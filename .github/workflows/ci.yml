@@ -23,7 +23,7 @@ jobs:
 
       - name: SwiftLint
         run: |
-          curl -OJ https://raw.githubusercontent.com/shapedbyiris/swiftlint-config/master/swiftlint.yml
+          curl -OJs https://raw.githubusercontent.com/shapedbyiris/swiftlint-config/master/swiftlint.yml
           swiftlint lint --strict --config swiftlint.yml
 
       - name: Build
