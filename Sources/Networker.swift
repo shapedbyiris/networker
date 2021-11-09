@@ -36,7 +36,7 @@ open class APIRequestLoader<T: APIRequest> {
 
     open func perform() -> AnyPublisher<T.SuccessfulResponseDataType, Error> {
         return urlSession.dataTaskPublisher(for: self.apiRequest.request)
-            .tryMap { (data, response) -> Data in
+            .tryMap { data, response -> Data in
                 if response.isSuccess {
                     return data
                 } else {
