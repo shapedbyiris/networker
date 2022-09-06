@@ -29,46 +29,24 @@ struct SlideshowRequest: APIRequest {
 
 // Initialise an APIRequestLoader with the APIRequest. APIRequestLoader will know
 // what to look for in the response and smoothly report errors:
-let loader = APIRequestLoader(apiRequest: SlideshowRequest())
-loader.perform { result in
-    print(result)
-}
+let loader = APIRequestLoader(SlideshowRequest())
+let result = try await loader.perform()
+print(result.slideshow.author) // "Yours Truly"
 ```
 
 
 ## Integration
 
-### Cocoapods
-```ruby
-pod 'Networker',
-    :git => 'https://github.com/shapedbyiris/networker.git',
-    :tag => '~> 0.2',
-    :testspecs => ['Tests']
-```
-
 ### Swift Package Manager
-
-If you want to start from scratch:
-
-```bash
-swift package init --type=executable
-swift package generate-xcodeproj
-```
 
 In `Packages.swift`:
 ```swift
 // Add this line in the `dependencies` array:
-.package(url: "https://github.com/shapedbyiris/networker.git", from: "0.2.0")
+.package(url: "https://github.com/shapedbyiris/networker.git", from: "1.0.0")
 
 // Add Networker to your target's dependencies:
 .dependencies: ["Networker"]
 ```
-
-Then run
-```bash
-swift package update
-```
-
 
 ## Inspiration
 
