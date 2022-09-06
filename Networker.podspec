@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "Networker"
-  spec.version      = "0.5.0"
+  spec.version      = "1.0.0"
   spec.summary      = "Swifty networking."
   spec.description  = <<-DESC
   Type-safe, API-agnostic networking.
@@ -13,8 +13,8 @@ Pod::Spec.new do |spec|
   }
   spec.author       = { "Ariel Elkin" => "ariel@shapedbyiris.com" }
   spec.platform     = :ios, :macos
-  spec.ios.deployment_target = "10.0"
-  spec.osx.deployment_target = "10.9"
+  spec.ios.deployment_target = "13.0"
+  spec.osx.deployment_target = "10.15"
   spec.swift_version = '5.0'
   spec.source_files  = "Sources/*.swift"
 
