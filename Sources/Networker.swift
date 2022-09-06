@@ -29,7 +29,7 @@ extension APIRequest {
         } else {
             typealias RequestContinuation = CheckedContinuation<SuccessfulResponseDataType, Error>
             return try await withCheckedThrowingContinuation({ (continuation: RequestContinuation) in
-                let _ = urlSession.dataTaskPublisher(for: self.request)
+                _ = urlSession.dataTaskPublisher(for: self.request)
                     .tryMap { data, response -> Data in
                         if response.isSuccess {
                             return data
