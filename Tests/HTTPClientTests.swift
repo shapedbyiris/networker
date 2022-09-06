@@ -29,7 +29,8 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
         let request = URLRequest(url: URL(string: "https://example.com")!)
     }
 
-    func testLoaderSuccess() {
+    func testLoaderSuccess() async throws {
+
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let urlSession = URLSession(configuration: configuration)
@@ -37,32 +38,25 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
         MockURLProtocol.requestHandler = { request in
             XCTAssertEqual(request.url?.absoluteString.contains("example"), true)
 
-            let resultObject = MockSuccessType(value: 32)
+            let resultObject = MockSuccessType(value: 42)
             let resultJSON = try! JSONEncoder().encode(resultObject)
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
 
             return (response, resultJSON)
         }
 
-        let expectation = XCTestExpectation(description: "response")
-
         let apiRequest = MockAPIRequestType()
         let loader = APIRequestLoader(apiRequest, urlSession: urlSession)
-        loader.perform()
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    expectation.fulfill()
-                case .failure(let error):
-                    XCTFail(String(describing: error))
-                }
 
-            } receiveValue: { value in
-                XCTAssert(value.value == 32)
-            }
-            .store(in: &cancelBag)
+        let expectation = XCTestExpectation(description: "doesn't timeout")
 
-        wait(for: [expectation], timeout: 1)
+        Task {
+            let result = try await loader.perform()
+            XCTAssert(result.value == 42)
+            expectation.fulfill()
+        }
+
+        self.wait(for: [expectation], timeout: 1)
     }
 }
 
