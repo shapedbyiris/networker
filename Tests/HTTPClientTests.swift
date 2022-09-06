@@ -45,13 +45,11 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
             return (response, resultJSON)
         }
 
-        let apiRequest = MockAPIRequestType()
-        let loader = APIRequestLoader(apiRequest, urlSession: urlSession)
-
         let expectation = XCTestExpectation(description: "doesn't timeout")
 
         Task {
-            let result = try await loader.perform()
+            let apiRequest = MockAPIRequestType()
+            let result = try await apiRequest.perform(urlSession: urlSession)
             XCTAssert(result.value == 42)
             expectation.fulfill()
         }
