@@ -18,7 +18,7 @@ public protocol APIRequest {
 
 extension APIRequest {
     public func perform(urlSession: URLSession = .shared) async throws -> SuccessfulResponseDataType {
-        if #available(macOS 12.0, *) {
+        if #available(macOS 12.0, iOS 15.0, watchOS 15.0, tvOS 15.0, macCatalyst 15.0, *) {
             let (data, response) = try await urlSession.data(for: request)
             if response.isSuccess {
                 return try JSONDecoder().decode(SuccessfulResponseDataType.self, from: data)
@@ -28,8 +28,11 @@ extension APIRequest {
             }
         } else {
             typealias RequestContinuation = CheckedContinuation<SuccessfulResponseDataType, Error>
+
+            var cancelBag = Set<AnyCancellable>()
+
             return try await withCheckedThrowingContinuation({ (continuation: RequestContinuation) in
-                _ = urlSession.dataTaskPublisher(for: self.request)
+                urlSession.dataTaskPublisher(for: self.request)
                     .tryMap { data, response -> Data in
                         if response.isSuccess {
                             return data
@@ -49,6 +52,7 @@ extension APIRequest {
                     }, receiveValue: { value in
                         continuation.resume(returning: value)
                     })
+                    .store(in: &cancelBag)
             })
         }
     }

@@ -53,8 +53,7 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
             XCTAssert(result.value == 42)
             expectation.fulfill()
         }
-
-        self.wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 1)
     }
 }
 
