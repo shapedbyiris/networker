@@ -9,15 +9,12 @@
 import XCTest
 
 @testable import Networker
-import Combine
 
 class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
-
-    var cancelBag = Set<AnyCancellable>()
-
     struct MockErrorType: Error, Codable {
         let message: String
     }
+
     struct MockSuccessType: Codable {
         let value: Int
     }
@@ -30,7 +27,6 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
     }
 
     func testLoaderSuccess() async throws {
-
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let urlSession = URLSession(configuration: configuration)
@@ -58,15 +54,14 @@ class HTTPClientTests: XCTestCase { // swiftlint:disable force_try nesting
 }
 
 class MockURLProtocol: URLProtocol {
-
     static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
 
-    override class func canInit(with request: URLRequest) -> Bool {
-        return true
+    override class func canInit(with _: URLRequest) -> Bool {
+        true
     }
 
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        return request
+        request
     }
 
     override func startLoading() {
@@ -83,7 +78,6 @@ class MockURLProtocol: URLProtocol {
             client.urlProtocol(self, didFailWithError: error)
         }
     }
-    override func stopLoading() {
 
-    }
+    override func stopLoading() {}
 }

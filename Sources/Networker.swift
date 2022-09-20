@@ -6,8 +6,8 @@
 //  Copyright © 2019 IRIS. All rights reserved.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 public protocol APIRequest {
     var request: URLRequest { get }
@@ -16,8 +16,8 @@ public protocol APIRequest {
     associatedtype ErrorResponseDataType: Error, Decodable
 }
 
-extension APIRequest {
-    public func perform(urlSession: URLSession = .shared) async throws -> SuccessfulResponseDataType {
+public extension APIRequest {
+    func perform(urlSession: URLSession = .shared) async throws -> SuccessfulResponseDataType {
         if #available(macOS 12.0, iOS 15.0, watchOS 15.0, tvOS 15.0, macCatalyst 15.0, *) {
             let (data, response) = try await urlSession.data(for: request)
             if response.isSuccess {
@@ -31,7 +31,7 @@ extension APIRequest {
 
             var cancelBag = Set<AnyCancellable>()
 
-            return try await withCheckedThrowingContinuation({ (continuation: RequestContinuation) in
+            return try await withCheckedThrowingContinuation { (continuation: RequestContinuation) in
                 urlSession.dataTaskPublisher(for: self.request)
                     .tryMap { data, response -> Data in
                         if response.isSuccess {
@@ -44,7 +44,7 @@ extension APIRequest {
                     .decode(type: SuccessfulResponseDataType.self, decoder: JSONDecoder())
                     .sink(receiveCompletion: { result in
                         switch result {
-                        case .failure(let error):
+                        case let .failure(error):
                             continuation.resume(throwing: error)
                         case .finished:
                             break
@@ -53,7 +53,7 @@ extension APIRequest {
                         continuation.resume(returning: value)
                     })
                     .store(in: &cancelBag)
-            })
+            }
         }
     }
 }
