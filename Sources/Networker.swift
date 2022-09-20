@@ -58,15 +58,6 @@ extension APIRequest {
     }
 }
 
-extension Optional where Wrapped: URLResponse {
-    var isSuccess: Bool {
-        if let statusCode = (self as? HTTPURLResponse)?.statusCode {
-            return statusCode >= 200 && statusCode < 400
-        }
-        return false
-    }
-}
-
 extension URLResponse {
     var isSuccess: Bool {
         if let statusCode = (self as? HTTPURLResponse)?.statusCode {
