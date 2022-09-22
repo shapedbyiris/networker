@@ -7,13 +7,13 @@ let package = Package(
         .macOS(.v10_15),
         .iOS(.v13),
         .tvOS(.v10),
-        .watchOS(.v3),
+        .watchOS(.v3)
     ],
     products: [
         .library(
             name: "Networker",
             targets: ["Networker"]
-        ),
+        )
     ],
     dependencies: [
     ],
@@ -27,6 +27,6 @@ let package = Package(
             name: "NetworkerTests",
             dependencies: ["Networker"],
             path: "Tests"
-        ),
+        )
     ]
 )
