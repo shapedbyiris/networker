@@ -10,7 +10,7 @@ import Combine
 import Foundation
 
 public protocol APIRequest {
-    var request: URLRequest { get }
+    var request: URLRequest { get set }
 
     associatedtype SuccessfulResponseDataType: Decodable
     associatedtype ErrorResponseDataType: Error, Decodable
