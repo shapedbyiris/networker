@@ -23,8 +23,11 @@ public extension APIRequest {
             if response.isSuccess {
                 return try JSONDecoder().decode(SuccessfulResponseDataType.self, from: data)
             } else {
-                let apiError = try JSONDecoder().decode(ErrorResponseDataType.self, from: data)
-                throw apiError
+                if let apiError = try? JSONDecoder().decode(ErrorResponseDataType.self, from: data) {
+                    throw apiError
+                } else {
+                    throw NetworkerError(code: (response as? HTTPURLResponse)?.statusCode ?? 0)
+                }
             }
         } else {
             typealias RequestContinuation = CheckedContinuation<SuccessfulResponseDataType, Error>
@@ -56,6 +59,10 @@ public extension APIRequest {
             }
         }
     }
+}
+
+public struct NetworkerError: Error {
+    public let code: Int
 }
 
 extension URLResponse {
